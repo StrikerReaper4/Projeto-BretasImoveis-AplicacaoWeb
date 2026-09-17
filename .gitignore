@@ -1,0 +1,28 @@
+# Runtimes portáteis baixados pelo INICIAR.bat / iniciar.sh (Java, Node, PostgreSQL)
+# São centenas de MB e são rebaixados automaticamente. NUNCA versionar.
+.runtime/
+
+# Logs gerados pelos scripts
+*.log
+
+# Build do back-end
+target/
+
+# Dependências e build do front-end (rede de segurança; cada projeto já tem o seu .gitignore)
+node_modules/
+dist/
+dist-ssr/
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Guias de estudo (nao versionar)
+GUIA_APRESENTACAO.md
+CONFORMIDADE_REQUISITOS.md
