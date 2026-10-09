@@ -102,8 +102,9 @@ export default function Header({ admin }) {
                 </ul>
               </nav>
             </div>
-            <div className="flex justify-end mt-8 flex-col space-y-8">
-              <div className="pt-1 flex space-x-3 gap-3 justify-end items-center mr-10">
+            <div className="flex justify-end mt-4 flex-col space-y-3">
+              {/* Conta: linha própria, para não alargar a coluna em telas médias */}
+              <div className="flex justify-end items-center mr-10 whitespace-nowrap">
                 {usuarioLogado ? (
                   <div className="flex items-center gap-3 text-white font-bold">
                     <span>Olá, {primeiroNome}</span>
@@ -112,7 +113,7 @@ export default function Header({ admin }) {
                       onClick={sair}
                       className="flex items-center gap-1 cursor-pointer hover:text-[#e3c668] transition"
                     >
-                      <IoExitOutline size={26} aria-hidden="true" />
+                      <IoExitOutline size={22} aria-hidden="true" />
                       Sair
                     </button>
                   </div>
@@ -120,11 +121,13 @@ export default function Header({ admin }) {
                   <button
                     type="button"
                     onClick={() => navigate("/login")}
-                    className="bg-white text-[#0f3e58] font-bold rounded-4xl px-5 py-2 cursor-pointer hover:bg-[#e3c668] hover:text-white transition-colors duration-300"
+                    className="bg-white text-[#0f3e58] font-bold rounded-4xl px-5 py-1 cursor-pointer hover:bg-[#e3c668] hover:text-white transition-colors duration-300"
                   >
                     Entrar
                   </button>
                 )}
+              </div>
+              <div className="pt-1 flex space-x-3 gap-3 justify-end mr-10">
                 <img
                   src="/Bandeira_Brasil.png"
                   className="w-[50px] h-[50px] rounded-[100%]"
