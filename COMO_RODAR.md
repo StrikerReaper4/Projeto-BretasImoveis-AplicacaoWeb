@@ -19,9 +19,10 @@ Para desligar tudo (backend, frontend e banco): **`PARAR.bat`**.
 ## Acessos
 | O quê | Endereço | Login |
 |---|---|---|
-| Site | http://localhost:5173 | – |
-| Painel admin | http://localhost:5173/admin | admin@bretas.com / admin123 |
-| Usuário comum (API) | POST /api/auth/login | user@bretas.com / user123 |
+| Site (visitante) | http://localhost:5173 | – |
+| Login / Criar conta | http://localhost:5173/login | mesma tela para usuário e admin |
+| Usuário comum (favoritos) | http://localhost:5173/login | user@bretas.com / user123 |
+| Painel admin | http://localhost:5173/login (ou /admin) | admin@bretas.com / admin123 |
 | API | http://localhost:8080/api/imoveis | – |
 | Banco (DBeaver) | localhost:**5544**, banco `imoveis_bretas` | bretas / bretas123 |
 
@@ -29,8 +30,12 @@ Para desligar tudo (backend, frontend e banco): **`PARAR.bat`**.
 1. **IDE**: árvore `model / repository / service / controller / security / config`.
 2. **Banco**: DBeaver → nova conexão PostgreSQL (dados acima) → tabela `imoveis`.
 3. **Site**: Home lista imóveis vindos da API → filtro → detalhe.
-4. **Segurança**: sem token, `DELETE /api/imoveis/1` retorna **401**; como USER retorna **403**; logado como admin → cadastrar, editar e excluir no painel.
-5. **Prova de persistência**: cadastre um imóvel no painel e dê F5 na tabela no DBeaver: a linha aparece.
+4. **Perfis na mesma tela de login** (`/login`): o perfil não é escolhido, quem decide é o back-end pelo `role` do token.
+   - **Visitante**: botão "Entrar como visitante" → vê e filtra os imóveis.
+   - **Usuário** (`user@bretas.com`): volta para a Home com o coração nos cards → favorita → menu "Meus Favoritos". Também dá para criar uma conta nova em "Criar conta".
+   - **Admin** (`admin@bretas.com`): vai direto para o painel de gerenciamento.
+5. **Segurança**: sem token, `DELETE /api/imoveis/1` retorna **401**; como USER retorna **403**; logado como admin → cadastrar, editar e excluir no painel.
+6. **Prova de persistência**: cadastre um imóvel no painel e dê F5 na tabela no DBeaver: a linha aparece. Favorite um imóvel como usuário e consulte `SELECT * FROM usuario_favoritos;`.
 
 ## Endpoints
 | Método | Rota | Acesso |
@@ -39,6 +44,18 @@ Para desligar tudo (backend, frontend e banco): **`PARAR.bat`**.
 | GET | /api/imoveis, /api/imoveis/{id} | público |
 | POST | /api/imoveis/filtro | público |
 | POST / PUT / DELETE | /api/imoveis[/{id}] | ROLE_ADMIN |
+| GET | /api/favoritos | ROLE_USER (favoritos do próprio usuário) |
+| POST / DELETE | /api/favoritos/{imovelId} | ROLE_USER |
+
+O usuário dos favoritos vem do token JWT, nunca da URL: ninguém altera os favoritos de outra pessoa.
+
+## Banco de dados
+Tabelas criadas pelo Hibernate a partir das entidades:
+- `imoveis` e `imovel_imagens` (1:N, fotos do imóvel)
+- `usuarios` (e-mail único, senha em hash BCrypt, perfil USER/ADMIN)
+- `usuario_favoritos` (N:N entre usuários e imóveis; chave primária composta `usuario_id, imovel_id`)
+
+Ao excluir um imóvel, ele é removido antes dos favoritos de todos os usuários, para a chave estrangeira não bloquear a exclusão.
 
 ## Rodar manualmente (sem o script)
 Com um PostgreSQL próprio, rode `backend_ib_v2/database/setup.sql` como `postgres` e informe a conexão:

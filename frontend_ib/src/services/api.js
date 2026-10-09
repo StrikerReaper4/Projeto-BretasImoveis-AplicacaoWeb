@@ -4,7 +4,10 @@ const FOTOS_PADRAO = ["/placeholder_house.jpg", "/placeholder_house_2.jpg", "/pl
 export const auth = {
   get token() { return localStorage.getItem("token"); },
   get role() { return localStorage.getItem("role"); },
-  isAdmin() { return this.token && this.role === "ADMIN"; },
+  get nome() { return localStorage.getItem("nome"); },
+  isAdmin() { return Boolean(this.token) && this.role === "ADMIN"; },
+  /** Usuário comum logado: pode favoritar. */
+  isUser() { return Boolean(this.token) && this.role === "USER"; },
   save({ token, role, nome }) {
     localStorage.setItem("token", token);
     localStorage.setItem("role", role);
@@ -18,8 +21,12 @@ async function request(path, { method = "GET", body } = {}) {
   if (auth.token) headers.Authorization = `Bearer ${auth.token}`;
   const res = await fetch(`${API_URL}${path}`, { method, headers, body: body && JSON.stringify(body) });
   if (!res.ok) {
+    // Token expirado ou inválido: encerra a sessão local para o usuário logar de novo.
+    if (res.status === 401 && auth.token && !path.startsWith("/auth")) auth.logout();
     const erro = await res.json().catch(() => ({}));
-    throw new Error(erro.message || erro.erro || `Erro ${res.status}`);
+    const falha = new Error(erro.message || erro.erro || `Erro ${res.status}`);
+    falha.status = res.status;
+    throw falha;
   }
   return res.status === 204 ? null : res.json();
 }
@@ -66,10 +73,14 @@ export function toBack(p) {
 
 export const api = {
   login: (email, senha) => request("/auth/login", { method: "POST", body: { email, senha } }),
+  registrar: (nome, email, senha) => request("/auth/register", { method: "POST", body: { nome, email, senha } }),
   listarImoveis: () => request("/imoveis").then((l) => l.map(toFront)),
   buscarImovel: (id) => request(`/imoveis/${id}`).then(toFront),
   filtrarImoveis: (filtro) => request("/imoveis/filtro", { method: "POST", body: filtro }).then((l) => l.map(toFront)),
   criarImovel: (p) => request("/imoveis", { method: "POST", body: toBack(p) }),
   atualizarImovel: (id, p) => request(`/imoveis/${id}`, { method: "PUT", body: toBack(p) }),
   deletarImovel: (id) => request(`/imoveis/${id}`, { method: "DELETE" }),
+  listarFavoritos: () => request("/favoritos").then((l) => l.map(toFront)),
+  favoritar: (id) => request(`/favoritos/${id}`, { method: "POST" }),
+  desfavoritar: (id) => request(`/favoritos/${id}`, { method: "DELETE" }),
 };

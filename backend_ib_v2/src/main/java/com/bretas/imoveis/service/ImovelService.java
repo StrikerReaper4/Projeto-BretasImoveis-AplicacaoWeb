@@ -3,9 +3,11 @@ package com.bretas.imoveis.service;
 import com.bretas.imoveis.dto.FiltroImovel;
 import com.bretas.imoveis.model.Imovel;
 import com.bretas.imoveis.repository.ImovelRepository;
+import com.bretas.imoveis.repository.UsuarioRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -14,9 +16,11 @@ import java.util.List;
 public class ImovelService {
 
     private final ImovelRepository repository;
+    private final UsuarioRepository usuarios;
 
-    public ImovelService(ImovelRepository repository) {
+    public ImovelService(ImovelRepository repository, UsuarioRepository usuarios) {
         this.repository = repository;
+        this.usuarios = usuarios;
     }
 
     public List<Imovel> listar() {
@@ -43,7 +47,11 @@ public class ImovelService {
         return repository.save(dados);
     }
 
+    /** Remove o imóvel dos favoritos antes de excluí-lo (a chave estrangeira bloquearia o DELETE). */
+    @Transactional
     public void deletar(Long id) {
-        repository.delete(buscar(id));
+        Imovel imovel = buscar(id);
+        usuarios.removerImovelDosFavoritos(id);
+        repository.delete(imovel);
     }
 }

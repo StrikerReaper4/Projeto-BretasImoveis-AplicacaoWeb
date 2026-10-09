@@ -37,6 +37,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/imoveis/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/imoveis/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/imoveis/**").hasRole("ADMIN")
+                        // ROLE_USER: favoritos do próprio usuário
+                        .requestMatchers("/api/favoritos/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

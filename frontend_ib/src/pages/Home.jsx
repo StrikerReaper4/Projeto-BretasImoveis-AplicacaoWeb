@@ -5,11 +5,13 @@ import CardProperty from "../components/CardProperty";
 import { useEffect, useState } from "react";
 import { FaArrowUp } from "react-icons/fa";
 import { api } from "../services/api";
+import { useFavoritos } from "../hooks/useFavoritos";
 
 function Home() {
   const [showExtra, setShowExtra] = useState(false);
   const [properties, setProperties] = useState([]);
   const [status, setStatus] = useState("loading");
+  const favoritos = useFavoritos();
 
   const carregar = (filtro) => {
     setStatus("loading");
@@ -72,7 +74,12 @@ function Home() {
           {status === "ok" && properties.length === 0 && <p>Nenhum imóvel encontrado.</p>}
           <div className="flex flex-wrap gap-8 justify-center items-center">
             {properties.map((property) => (
-              <CardProperty key={property.id} property={property} />
+              <CardProperty
+                key={property.id}
+                property={property}
+                favorito={favoritos.ids.has(property.id)}
+                onToggleFavorito={favoritos.ativo ? favoritos.alternar : undefined}
+              />
             ))}
           </div>
         </section>

@@ -6,6 +6,7 @@ import AboutUs from './pages/AboutUs';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
 import PropertySelected from './pages/PropertySelected';
+import FavoritesPage from './pages/FavoritesPage';
 //?
 
 import './App.css'
@@ -18,6 +19,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/property/:id" element={<PropertySelected />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/favoritos" element={<FavoritesPage />} />
         <Route path="/admin" element={<LoginPage />} />
         <Route path="/admin/logged" element={<AdminPage />} />
       </Routes>

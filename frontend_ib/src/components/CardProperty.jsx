@@ -1,11 +1,15 @@
-import { FaMapMarkerAlt, FaBath, FaCarAlt } from "react-icons/fa";
+import { FaMapMarkerAlt, FaBath, FaCarAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 import { IoIosBed } from "react-icons/io";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
 import Modal from "./Modal";
 import { useState, useCallback } from "react";
 
-export default function CardProperty({ property, admin, handleOpen }) {
+/**
+ * favorito / onToggleFavorito: só são passados quando há um usuário comum logado.
+ * Sem eles (visitante ou admin) o botão de coração não aparece.
+ */
+export default function CardProperty({ property, admin, handleOpen, favorito = false, onToggleFavorito }) {
   const navigate = useNavigate();
   const redirectToWhatsapp = () => {
     const phoneNumber = "5567992609967";
@@ -23,7 +27,23 @@ export default function CardProperty({ property, admin, handleOpen }) {
   }
   return (
     <>
-      <div className="bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left">
+      <div className="relative bg-white min-w-[350px] min-h-[400px] rounded-xl p-4 shadow-md text-left">
+        {onToggleFavorito && (
+          <button
+            type="button"
+            onClick={() => onToggleFavorito(property.id)}
+            aria-pressed={favorito}
+            aria-label={favorito ? `Remover ${property.address} dos favoritos` : `Adicionar ${property.address} aos favoritos`}
+            title={favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+            className="absolute top-6 right-6 z-10 bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-md cursor-pointer hover:scale-110 transition"
+          >
+            {favorito ? (
+              <FaHeart size={24} className="text-red-600" aria-hidden="true" />
+            ) : (
+              <FaRegHeart size={24} className="text-[#0f3e58]" aria-hidden="true" />
+            )}
+          </button>
+        )}
         <img
           src={property.img[0]}
           alt="Imagem do Imóvel"

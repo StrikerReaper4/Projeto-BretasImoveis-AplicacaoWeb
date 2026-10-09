@@ -19,6 +19,15 @@ export default function Header({ admin }) {
     setAtualTheme(opositeTheme);
   };*/
 
+  const usuarioLogado = auth.isUser();
+  const primeiroNome = (auth.nome || "").split(" ")[0];
+
+  // Recarrega a página para que nenhuma tela continue exibindo dados do usuário que saiu.
+  const sair = () => {
+    auth.logout();
+    window.location.assign("/");
+  };
+
   const redirectTo = (url) => {
     window.open(url, "_blank", "noopener noreferrer");
   };
@@ -63,7 +72,7 @@ export default function Header({ admin }) {
                 onClick={() => navigate("/")}
               />
               <nav className="mt-4 bg-white rounded-md flex justify-center">
-                <ul className="flex space-x-6 gap-4 text-[#0f3e58] text-lg font-bold px-6">
+                <ul className="flex space-x-6 gap-4 text-[#0f3e58] text-lg font-bold px-6 whitespace-nowrap">
                   <li
                     onClick={() => navigate("/")}
                     className={`hover:text-[#e3c668] cursor-pointer ${
@@ -80,11 +89,42 @@ export default function Header({ admin }) {
                   >
                     Sobre Nós
                   </li>
+                  {usuarioLogado && (
+                    <li
+                      onClick={() => navigate("/favoritos")}
+                      className={`hover:text-[#e3c668] cursor-pointer ${
+                        location.pathname === "/favoritos" ? "text-[#a46e29]" : ""
+                      }`}
+                    >
+                      Meus Favoritos
+                    </li>
+                  )}
                 </ul>
               </nav>
             </div>
             <div className="flex justify-end mt-8 flex-col space-y-8">
-              <div className="pt-1 flex space-x-3 gap-3 justify-end mr-10">
+              <div className="pt-1 flex space-x-3 gap-3 justify-end items-center mr-10">
+                {usuarioLogado ? (
+                  <div className="flex items-center gap-3 text-white font-bold">
+                    <span>Olá, {primeiroNome}</span>
+                    <button
+                      type="button"
+                      onClick={sair}
+                      className="flex items-center gap-1 cursor-pointer hover:text-[#e3c668] transition"
+                    >
+                      <IoExitOutline size={26} aria-hidden="true" />
+                      Sair
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                    className="bg-white text-[#0f3e58] font-bold rounded-4xl px-5 py-2 cursor-pointer hover:bg-[#e3c668] hover:text-white transition-colors duration-300"
+                  >
+                    Entrar
+                  </button>
+                )}
                 <img
                   src="/Bandeira_Brasil.png"
                   className="w-[50px] h-[50px] rounded-[100%]"
@@ -111,7 +151,7 @@ export default function Header({ admin }) {
 
               <div className="flex justify-end mr-10 mb-2">
                 <h3 className="text-white font-bold">
-                  © 2025 - Bretas Imóveis
+                  © 2026 - Bretas Imóveis
                 </h3>
               </div>
             </div>
@@ -159,7 +199,39 @@ export default function Header({ admin }) {
                   >
                     Sobre Nós
                   </button>
+                  {usuarioLogado && (
+                    <button
+                      onClick={() => {
+                        navigate("/favoritos");
+                      }}
+                      className={`text-left ${
+                        location.pathname === "/favoritos" ? "text-[#a46e29]" : ""
+                      }`}
+                    >
+                      Meus Favoritos
+                    </button>
+                  )}
                 </nav>
+
+                <hr className="my-4 border-[#0f3e58]/30" />
+
+                {usuarioLogado ? (
+                  <div className="flex items-center justify-between font-bold text-lg">
+                    <span>Olá, {primeiroNome}</span>
+                    <button type="button" onClick={sair} className="flex items-center gap-1 cursor-pointer">
+                      <IoExitOutline size={26} aria-hidden="true" />
+                      Sair
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => navigate("/login")}
+                    className="w-full bg-[#0f3e58] text-white font-bold rounded-4xl py-2 cursor-pointer"
+                  >
+                    Entrar ou criar conta
+                  </button>
+                )}
 
                 <hr className="my-4 border-[#0f3e58]/30" />
 
@@ -213,7 +285,7 @@ export default function Header({ admin }) {
                 </div>
 
                 <div className="mt-6 text-sm text-[#0f3e58] font-semibold">
-                  © 2025 - Bretas Imóveis
+                  © 2026 - Bretas Imóveis
                 </div>
               </div>
             )}

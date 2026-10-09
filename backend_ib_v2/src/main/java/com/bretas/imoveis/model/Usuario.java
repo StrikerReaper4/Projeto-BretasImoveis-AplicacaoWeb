@@ -2,6 +2,9 @@ package com.bretas.imoveis.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
@@ -24,6 +27,17 @@ public class Usuario {
     @Column(nullable = false)
     private Role role = Role.USER;
 
+    /**
+     * Imóveis favoritados pelo usuário. Relação N:N: um usuário favorita vários imóveis
+     * e um imóvel pode ser favorito de vários usuários. O JPA cria a tabela de junção
+     * usuario_favoritos (usuario_id, imovel_id).
+     */
+    @ManyToMany
+    @JoinTable(name = "usuario_favoritos",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "imovel_id"))
+    private Set<Imovel> favoritos = new HashSet<>();
+
     public Usuario() {}
 
     public Usuario(String nome, String email, String senha, Role role) {
@@ -42,4 +56,5 @@ public class Usuario {
     public void setSenha(String senha) { this.senha = senha; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+    public Set<Imovel> getFavoritos() { return favoritos; }
 }

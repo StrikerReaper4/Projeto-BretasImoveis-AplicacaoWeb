@@ -1,17 +1,19 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useParams } from "react-router-dom";
-import { FaAngleLeft, FaAngleRight, FaBath, FaCarAlt } from "react-icons/fa";
+import { FaAngleLeft, FaAngleRight, FaBath, FaCarAlt, FaHeart, FaRegHeart } from "react-icons/fa";
 import Button from "../components/Button";
 import { useState, useEffect } from "react";
 import { IoIosBed } from "react-icons/io";
 import { api } from "../services/api";
+import { useFavoritos } from "../hooks/useFavoritos";
 
 function PropertySelected() {
   const [imageSelected, setImageSelected] = useState(0);
   const [property, setProperty] = useState(null);
   const [erro, setErro] = useState(false);
   const { id } = useParams();
+  const favoritos = useFavoritos();
   const icons = [
     <IoIosBed size={55} className="inline-block ml-2" aria-hidden="true" />,
     <FaBath size={55} className="inline-block ml-2" aria-hidden="true" />,
@@ -135,6 +137,20 @@ function PropertySelected() {
               className="p-2 mt-6 bg-[#c5ac5c] hover:bg-[#978b62] transition"
               onClick={() => redirectToWhatsapp()}
             />
+            {favoritos.ativo && (
+              <button
+                type="button"
+                onClick={() => favoritos.alternar(property.id)}
+                aria-pressed={favoritos.ids.has(property.id)}
+                className="mt-3 w-full flex items-center justify-center gap-2 p-2 rounded-4xl border-2 border-white text-white text-xl font-semibold cursor-pointer hover:bg-white hover:text-[#0f3e58] transition"
+              >
+                {favoritos.ids.has(property.id) ? (
+                  <><FaHeart className="text-red-500" aria-hidden="true" /> Remover dos favoritos</>
+                ) : (
+                  <><FaRegHeart aria-hidden="true" /> Adicionar aos favoritos</>
+                )}
+              </button>
+            )}
           </div>
 
           {/* === Itens adicionais === */}
